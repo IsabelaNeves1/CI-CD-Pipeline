@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="jornal.css">
+</head>
+<body>
+    <div class="title">
+            <h1>Jornal de Matão</h1>
+    </div>
+    <nav>
+        <a href="#" class="nav-link" data-target="noticia1">Ir para Notícia 1</a>
+        <a href="#" class="nav-link" data-target="noticia2">Ir para Notícia 2</a>
+    </nav>
+    <div class="body">
+        <div class="card card-img">
+            <p>Noticia 1</p>
+            <img src="../img/news.jpg" alt="folhas de jornais">
+            <section id="noticia1" class="noticia-conteudo" style="display: none;">
+                <p>Esta notícia já foi visualizada <span id="contador-noticia1">0</span> vezes.</p>
+            </section>
+        </div>
+        <div class="body">
+            <div class="card card-img">
+                <p>Noticia 2</p>
+                <img src="../img/news.jpg" alt="folhas de jornais">
+                <section id="noticia2" class="noticia-conteudo" style="display: none;">
+                    <p>Esta notícia já foi visualizada <span id="contador-noticia2">0</span> vezes.</p>
+                </section>
+            </div>
+        </div>
+    </div>
+    <script src ="jornal.js"></script>
+</body>
+</html>

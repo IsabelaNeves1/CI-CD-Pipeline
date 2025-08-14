@@ -1,0 +1,43 @@
+name: CI/CD do Jornal
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout do Repositório
+        uses: actions/checkout@v3
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # Use a versão do Node que preferir
+
+      - name: Instalar dependências (Jest)
+        run: npm install
+
+      - name: Executar Testes
+        run: npm test
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test # Este job depende do job 'test'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Checkout do Repositório
+        uses: actions/checkout@v3
+
+      - name: Deploy para o GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./ # Onde os arquivos do site estão localizados

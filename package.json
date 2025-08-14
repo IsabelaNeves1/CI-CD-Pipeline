@@ -1,0 +1,27 @@
+{
+  "name": "ci-cd-pipeline",
+  "version": "1.0.0",
+  "description": "Este repositório foi criado para realizar uma atividade prática de integração e entrega contínua, sendo ela estruturar uma pipeline com github actions.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IsabelaNeves1/CI-CD-Pipeline.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IsabelaNeves1/CI-CD-Pipeline/issues"
+  },
+  "homepage": "https://github.com/IsabelaNeves1/CI-CD-Pipeline#readme",
+  "devDependencies": {
+    "jest": "^30.0.5",
+    "jsdom": "^26.1.0"
+  }
+}
