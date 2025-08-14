@@ -29,15 +29,15 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: test # Este job depende do job 'test'
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
-    steps:
-      - name: Checkout do Repositório
-        uses: actions/checkout@v3
 
-      - name: Deploy para o GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./ # Onde os arquivos do site estão localizados
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Vercel CLI
+      run: npm i -g vercel
+
+    - name: Deploy to Vercel
+      run: vercel --token ${{ secrets.VERCEL_TOKEN }} --prod # Se der erro, pode tentar colocar --yes
+      env:
+        VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
