@@ -7,21 +7,29 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch: # permite rodar manualmente
+
+# evita deploys concorrentes no mesmo branch
+concurrency:
+  group: prod-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   test:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout do Repositório
-        uses: actions/checkout@v3
+      - name: Checkout do Repositório (histórico completo p/ métricas)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Configurar Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18' # Use a versão do Node que preferir
+          node-version: '18'
 
-      - name: Instalar dependências (Jest)
+      - name: Instalar dependências
         run: npm install
 
       - name: Executar Testes
@@ -29,15 +37,40 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-
+    needs: test  # só roda se os testes passarem
+    environment: production
+    
     steps:
-    - uses: actions/checkout@v2
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Install Vercel CLI
-      run: npm i -g vercel
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-    - name: Deploy to Vercel
-      run: vercel --token ${{ secrets.VERCEL_TOKEN }} --prod # Se der erro, pode tentar colocar --yes
-      env:
-        VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-        VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Install Vercel CLI
+        run: npm i -g vercel
+
+      - name: Deploy to Vercel
+        id: deploy
+        run: vercel --token ${{ secrets.VERCEL_TOKEN }} --prod --yes
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      # --- Notificação para o Sleuth ---
+      - name: Notify Sleuth
+        if: ${{ success() && steps.deploy.outcome == 'success' }}
+        uses: sleuth-io/sleuth-action@v1
+        with:
+          api_key: ${{ secrets.SLEUTH_API_KEY }}
+          environment: production
+          revision: ${{ github.sha }}
+          repo: ${{ github.repository }}
+          deployed_at: ${{ github.event.head_commit.timestamp }}
