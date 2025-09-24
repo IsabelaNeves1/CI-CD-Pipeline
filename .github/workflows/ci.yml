@@ -66,12 +66,12 @@ jobs:
 
       # --- Notificação para o Sleuth ---
       - name: Notify Sleuth
-      if: ${{ success() && steps.deploy.outcome == 'success' }}
-      uses: sleuth-io/sleuth-action@main
-      with:
-        organization-slug: fatec-matao-luiz-marchesan      
-        deployment-slug: pipeline-app     
-        api-key: ${{ secrets.SLEUTH_API_KEY }}      
-        sha: ${{ github.sha }}                      
-        environment: production                     
-        email: nevesisabela03@gmail.com
+        if: ${{ success() && steps.deploy.outcome == 'success' }}
+        uses: sleuth-io/sleuth-action@main
+        with:
+          organization-slug: fatec-matao-luiz-marchesan      
+          deployment-slug: pipeline-app     
+          api-key: ${{ secrets.SLEUTH_API_KEY }}      
+          sha: ${{ github.sha }}                      
+          environment: production                     
+          email: nevesisabela03@gmail.com
