@@ -67,7 +67,7 @@ jobs:
       # --- Notificação para o Sleuth ---
       - name: Notify Sleuth
         if: ${{ success() && steps.deploy.outcome == 'success' }}
-        uses: sleuth-io/sleuth-action@v1
+        uses: sleuth-io/sleuth-action@main
         with:
           api_key: ${{ secrets.SLEUTH_API_KEY }}
           environment: production
