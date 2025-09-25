@@ -64,20 +64,22 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      - name: Notify Sleuth (FINAL CORRECTION)
+      - name: Notificar Sleuth (SOLUÇÃO FINAL)
+        # Condição para rodar apenas se o deploy foi bem-sucedido
         if: ${{ success() && steps.deploy.outcome == 'success' }}
         run: |
-          # A URL DEVE INCLUIR /code_deployments/<SLUG_DO_CODE_DEPLOYMENT>
+          # A URL CORRETA no modo PRECISE DEVE INCLUIR: /code_deployments/ci-cd-pipeline/
           API_URL="https://app.sleuth.io/api/1/deployments/fatec-matao-luiz-marchesan/pipeline-app/code_deployments/ci-cd-pipeline/register_deploy"
           
-          # Construindo o corpo JSON
+          # Construindo o corpo JSON com todos os parâmetros
           PAYLOAD='{
             "sha": "${{ github.sha }}",
             "environment": "production",
-            "email": "nevesisabela03@gmail.com"
+            "email": "nevesisabela03@gmail.com",
+            "branch": "main" 
           }'
 
-          # Enviando a requisição com autenticação apikey
+          # Enviando a requisição
           curl -X POST \
             -H "Authorization: apikey ${{ secrets.SLEUTH_API_KEY }}" \
             -H "Content-Type: application/json" \
