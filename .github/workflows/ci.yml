@@ -68,7 +68,7 @@ jobs:
         if: ${{ success() && steps.deploy.outcome == 'success' }}
         run: |
           # 1. Define a URL (com o slug correto)
-          API_URL="https://app.sleuth.io/api/1/deployments/fatec-matao-luiz-marchesan/pipeline-app/code_deployments/ci-cd-pipeline/register_deploy"
+          API_URL="https://app.sleuth.io/api/1/deployments/fatec-matao-luiz-marchesan/pipeline-app/register_deploy"
           
           # 2. Executa o CURL, enviando os dados como 'application/x-www-form-urlencoded'
           #    O -F (form data) é a forma correta de enviar chaves=valores simples.
