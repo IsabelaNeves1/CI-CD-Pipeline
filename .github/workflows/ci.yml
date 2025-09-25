@@ -72,5 +72,5 @@ jobs:
           deployment-slug: pipeline-app                  
           api-key: ${{ secrets.SLEUTH_API_KEY }}          
           sha: ${{ github.sha }}
-          environment: main
+          environment: production
           email: nevesisabela03@gmail.com
