@@ -64,12 +64,13 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      # --- Notificação para o Sleuth ---
       - name: Notify Sleuth
         if: ${{ success() && steps.deploy.outcome == 'success' }}
         uses: sleuth-io/sleuth-action@main
         with:
-          api_key: ${{ secrets.SLEUTH_API_KEY }}      
-          sha: ${{ github.sha }}                      
-          environment: main                     
+          organization-slug: fatec-matao-luiz-marchesan   
+          deployment-slug: pipeline-app                  
+          api-key: ${{ secrets.SLEUTH_API_KEY }}          
+          sha: ${{ github.sha }}
+          environment: main
           email: nevesisabela03@gmail.com
