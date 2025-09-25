@@ -64,16 +64,19 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      - name: Notificar Sleuth 
-        # Condição para rodar apenas se o deploy foi bem-sucedido
+      - name: Notificar Sleuth (SOLUÇÃO SIMPLIFICADA)
         if: ${{ success() && steps.deploy.outcome == 'success' }}
         run: |
-          # A URL CORRETA no modo PRECISE DEVE INCLUIR: /code_deployments/ci-cd-pipeline/
+          # 1. Define a URL (com o slug correto)
           API_URL="https://app.sleuth.io/api/1/deployments/fatec-matao-luiz-marchesan/pipeline-app/code_deployments/ci-cd-pipeline/register_deploy"
-
-          # Enviando a requisição
-          curl -X POST \
+          
+          # 2. Executa o CURL, enviando os dados como 'application/x-www-form-urlencoded'
+          #    O -F (form data) é a forma correta de enviar chaves=valores simples.
+          curl -v -X POST \
             -H "Authorization: apikey ${{ secrets.SLEUTH_API_KEY }}" \
-            -d "sha-${{ github.sha }}" \
-            -d "enviroment-production"
+            -F "sha=${{ github.sha }}" \
+            -F "environment=production" \
+            -F "branch=${{ github.ref_name }}" \
+            -F "email=nevesisabela03@gmail.com" \
+            "$API_URL"
 
