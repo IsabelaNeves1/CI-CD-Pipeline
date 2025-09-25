@@ -74,6 +74,6 @@ jobs:
           # Enviando a requisição
           curl -X POST \
             -H "Authorization: apikey ${{ secrets.SLEUTH_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d "$PAYLOAD" \
-            "$API_URL"
+            -d "sha-${{ github.sha }}" \
+            -d "enviroment-production"
+
