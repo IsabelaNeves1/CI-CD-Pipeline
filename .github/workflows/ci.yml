@@ -64,19 +64,20 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      - name: Notify Sleuth via cURL (Fix 401)
+      - name: Notify Sleuth (FINAL CORRECTION)
         if: ${{ success() && steps.deploy.outcome == 'success' }}
         run: |
-          API_URL="https://app.sleuth.io/api/1/deployments/fatec-matao-luiz-marchesan/pipeline-app/register_deploy"
+          # A URL DEVE INCLUIR /code_deployments/<SLUG_DO_CODE_DEPLOYMENT>
+          API_URL="https://app.sleuth.io/api/1/deployments/fatec-matao-luiz-marchesan/pipeline-app/code_deployments/ci-cd-pipeline/register_deploy"
           
-          # Construindo o corpo JSON com os dados do deploy
+          # Construindo o corpo JSON
           PAYLOAD='{
             "sha": "${{ github.sha }}",
             "environment": "production",
             "email": "nevesisabela03@gmail.com"
           }'
 
-          # Enviando a requisição com o formato de autenticação "apikey"
+          # Enviando a requisição com autenticação apikey
           curl -X POST \
             -H "Authorization: apikey ${{ secrets.SLEUTH_API_KEY }}" \
             -H "Content-Type: application/json" \
