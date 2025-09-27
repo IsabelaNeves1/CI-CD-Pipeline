@@ -64,24 +64,12 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      - name: Notificar Sleuth (SOLUÇÃO FINAL - ENDPOINT GENÉRICO)
+      - name: Notificar Sleuth
         if: ${{ success() && steps.deploy.outcome == 'success' }}
-        run: |
-          # 1. Endpoint Gênerico (sem o slug /code_deployments/ci-cd-pipeline/)
-          API_URL="https://app.sleuth.io/api/1/deployments/fatec-matao-luiz-marchesan/pipeline-app/register_deploy"
-          
-          # 2. Payload JSON (Obrigatório para este formato)
-          PAYLOAD='{
-            "sha": "${{ github.sha }}",
-            "environment": "production",
-            "email": "nevesisabela03@gmail.com",
-            "branch": "${{ github.ref_name }}",
-            "code_deployment": "CI-CD-Pipeline" # <--- ENVIA O NOME DO CODE DEPLOYMENT COMO PARÂMETRO
-          }'
-
-          # 3. Envia a requisição
-          curl -v -X POST \
-            -H "Authorization: apikey ${{ secrets.SLEUTH_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d "$PAYLOAD" \
-            "$API_URL"
+        uses: sleuth-io/sleuth-action@v1
+        with:
+          api_key: ${{ secrets.SLEUTH_API_KEY }}
+          environment: production
+          revision: ${{ github.sha }}
+          repo: ${{ github.repository }}
+          deployed_at: ${{ github.event.head_commit.timestamp }}
