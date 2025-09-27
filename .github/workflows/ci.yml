@@ -85,7 +85,9 @@ jobs:
       - name: Notificar Sleuth
         if: ${{ success() && steps.deploy.outcome == 'success' }}
         run: |
-          curl -X POST "https://app.sleuth.io/api/1/deployments/register_deploy" \
+          echo "Enviando notificação para o Sleuth..."
+          RESPONSE=$(
+          curl -v -X POST "https://app.sleuth.io/api/1/deployments/register_deploy" \
           -H "Authorization: apikey ${{ secrets.SLEUTH_API_KEY }}" \
           -H "Content-Type: application/json" \
           -d '{
@@ -98,4 +100,12 @@ jobs:
             "revision_title": "${{ github.event.head_commit.message }}",
             "code_deployment": true,
             "source": "github-actions"
-          }'
+          }')
+          
+          echo "Resposta do Sleuth:"
+          echo "$RESPONSE"
+          
+          if [[ $(echo "$RESPONSE" | grep -c "error") -gt 0 ]]; then
+            echo "Erro ao notificar o Sleuth"
+            exit 1
+          fi
