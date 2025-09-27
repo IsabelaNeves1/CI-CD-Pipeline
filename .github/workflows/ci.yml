@@ -55,14 +55,30 @@ jobs:
         run: npm install
 
       - name: Install Vercel CLI
-        run: npm i -g vercel
+        run: npm i -g vercel@latest
 
-      - name: Deploy to Vercel
-        id: deploy
-        run: vercel --token ${{ secrets.VERCEL_TOKEN }} --prod --yes
+      - name: Configure Vercel
+        run: |
+          vercel pull --yes --environment=production --token ${{ secrets.VERCEL_TOKEN }}
+          vercel build --prod --token ${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Deploy to Vercel
+        id: deploy
+        run: |
+          for /l %%i in (1,1,3) do (
+            vercel deploy --prebuilt --prod --token ${{ secrets.VERCEL_TOKEN }} && exit 0
+            echo "Tentativa %%i falhou. Aguardando 10 segundos..."
+            timeout /t 10 /nobreak
+          )
+          exit 1
+        shell: cmd
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TELEMETRY_DISABLED: 1
 
       - name: Notificar Sleuth
         if: ${{ success() && steps.deploy.outcome == 'success' }}
