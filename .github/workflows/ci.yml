@@ -22,15 +22,16 @@ jobs:
           sha: ${{ github.sha }}                            # commit atual
           environment: production                           # ambiente configurado
           email: nevesisabela03@gmail.com                  # e-mail do commit/deploy
-
+          
       - name: Test Sleuth Deploy via cURL
         run: |
           curl -X POST \
-            "https://app.sleuth.io/api/1/deployments/fatec-matao-luiz-marchesan/pipeline-app/register_deploy" \
-            -H "Authorization: Token ${{ secrets.SLEUTH_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d "{
-                  \"sha\": \"${{ github.sha }}\",
-                  \"environment\": \"production\",
-                  \"email\": \"nevesisabela03@gmail.com\"
-                }"
+          "https://app.sleuth.io/api/1/deployments/fatec-matao-luiz-marchesan/pipeline-app/register_deploy" \
+          -H "Content-Type: application/json" \
+          -d "{
+                \"api_key\": \"${{ secrets.SLEUTH_API_KEY }}\",
+                \"sha\": \"${{ github.sha }}\",
+                \"environment\": \"production\",
+                \"email\": \"nevesisabela03@gmail.com\"
+              }"    
+
