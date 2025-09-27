@@ -18,7 +18,7 @@ jobs:
         with:
           organization-slug: fatec-matao-luiz-marchesan    # slug da org no Sleuth
           deployment-slug: pipeline-app                     # nome do projeto no Sleuth
-          Authorization: Token ${{ secrets.SLEUTH_API_KEY }} # chave criada no Sleuth
+          api-key: Token ${{ secrets.SLEUTH_API_KEY }} # chave criada no Sleuth
           sha: ${{ github.sha }}                            # commit atual
           environment: production                           # ambiente configurado
           email: nevesisabela03@gmail.com                  # e-mail do commit/deploy
