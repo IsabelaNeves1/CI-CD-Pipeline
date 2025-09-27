@@ -20,5 +20,5 @@ jobs:
           deployment-slug: pipeline-app            # nome do projeto no Sleuth
           api-key: ${{ secrets.SLEUTH_API_KEY }}   # chave criada no Sleuth
           sha: ${{ github.sha }}                   # commit atual
-          environment: main                        # ambiente configurado
+          environment: production                        # ambiente configurado
           email: nevesisabela03@gmail.com              # e-mail do commit/deploy
