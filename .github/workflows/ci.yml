@@ -86,6 +86,14 @@ jobs:
         if: ${{ success() && steps.deploy.outcome == 'success' }}
         run: |
           echo "Enviando notificação para o Sleuth..."
+          echo "Dados sendo enviados:"
+          echo "SHA: ${{ github.sha }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Email: ${{ github.event.head_commit.author.email }}"
+          echo "Timestamp: ${{ github.event.head_commit.timestamp }}"
+          echo "Message: ${{ github.event.head_commit.message }}"
+          
           RESPONSE=$(
           curl -v -X POST "https://app.sleuth.io/api/1/deployments/register" \
           -H "Authorization: apikey ${{ secrets.SLEUTH_API_KEY }}" \
@@ -102,10 +110,11 @@ jobs:
             "source": "github-actions"
           }')
           
-          echo "Resposta do Sleuth:"
-          echo "$RESPONSE"
+          echo "\nResposta completa do Sleuth:"
+          echo "$RESPONSE" | jq '.' || echo "$RESPONSE"
           
           if [[ $(echo "$RESPONSE" | grep -c "error") -gt 0 ]]; then
-            echo "Erro ao notificar o Sleuth"
+            echo "\nErro detalhado do Sleuth:"
+            echo "$RESPONSE"
             exit 1
           fi
