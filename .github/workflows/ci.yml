@@ -66,10 +66,13 @@ jobs:
 
       - name: Notificar Sleuth
         if: ${{ success() && steps.deploy.outcome == 'success' }}
-        uses: sleuth-io/sleuth-action@v1
-        with:
-          api_key: ${{ secrets.SLEUTH_API_KEY }}
-          environment: production
-          revision: ${{ github.sha }}
-          repo: ${{ github.repository }}
-          deployed_at: ${{ github.event.head_commit.timestamp }}
+        run: |
+          curl -X POST "https://app.sleuth.io/api/1/deployments/register_deploy" \
+          -H "Authorization: apikey ${{ secrets.SLEUTH_API_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "environment": "production",
+            "sha": "${{ github.sha }}",
+            "repository": "${{ github.repository }}",
+            "timestamp": "${{ github.event.head_commit.timestamp }}"
+          }'
