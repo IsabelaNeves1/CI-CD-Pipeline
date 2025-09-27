@@ -87,7 +87,7 @@ jobs:
         run: |
           echo "Enviando notificação para o Sleuth..."
           RESPONSE=$(
-          curl -v -X POST "https://app.sleuth.io/api/1/deployments/register_deploy" \
+          curl -v -X POST "https://app.sleuth.io/api/1/deployments/register" \
           -H "Authorization: apikey ${{ secrets.SLEUTH_API_KEY }}" \
           -H "Content-Type: application/json" \
           -d '{
