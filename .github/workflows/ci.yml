@@ -11,17 +11,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Run Sleuth Action
-        uses: sleuth-io/sleuth-action@main
-        with:
-          organization-slug: fatec-matao-luiz-marchesan    # slug da org no Sleuth
-          deployment-slug: pipeline-app                     # nome do projeto no Sleuth
-          api-key: ${{ secrets.SLEUTH_API_KEY }} # chave criada no Sleuth
-          sha: ${{ github.sha }}                            # commit atual
-          environment: production                           # ambiente configurado
-          email: nevesisabela03@gmail.com                  # e-mail do commit/deploy
+        uses: actions/checkout@v4               
           
       - name: Test Sleuth Deploy via cURL
         run: |
