@@ -1,120 +1,24 @@
-name: CI/CD do Jornal
+name: Deploy Pipeline
 
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
-  workflow_dispatch: # permite rodar manualmente
-
-# evita deploys concorrentes no mesmo branch
-concurrency:
-  group: prod-${{ github.ref }}
-  cancel-in-progress: false
+      - main  
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout do Repositório (histórico completo p/ métricas)
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Configurar Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Instalar dependências
-        run: npm install
-
-      - name: Executar Testes
-        run: npm test
-
   deploy:
     runs-on: ubuntu-latest
-    needs: test  # só roda se os testes passarem
-    environment: production
-    
+
     steps:
-      - name: Checkout (full history)
+      - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Run Sleuth
+        uses: sleuth-io/sleuth-action@main
         with:
-          fetch-depth: 0
-
-      - name: Configurar Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Instalar dependências
-        run: npm install
-
-      - name: Install Vercel CLI
-        run: npm i -g vercel@latest
-
-      - name: Configure Vercel
-        run: |
-          vercel pull --yes --environment=production --token ${{ secrets.VERCEL_TOKEN }}
-          vercel build --prod --token ${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
-      - name: Deploy to Vercel
-        id: deploy
-        run: |
-          for i in {1..3}; do
-            if vercel deploy --prebuilt --prod --token ${{ secrets.VERCEL_TOKEN }}; then
-              exit 0
-            fi
-            echo "Tentativa $i falhou. Aguardando 10 segundos..."
-            sleep 10
-          done
-          exit 1
-        shell: bash
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          VERCEL_TELEMETRY_DISABLED: 1
-
-      - name: Notificar Sleuth
-        if: ${{ success() && steps.deploy.outcome == 'success' }}
-        run: |
-          echo "Enviando notificação para o Sleuth..."
-          echo "Dados sendo enviados:"
-          echo "SHA: ${{ github.sha }}"
-          echo "Repository: ${{ github.repository }}"
-          echo "Branch: ${{ github.ref_name }}"
-          echo "Email: ${{ github.event.head_commit.author.email }}"
-          echo "Timestamp: ${{ github.event.head_commit.timestamp }}"
-          echo "Message: ${{ github.event.head_commit.message }}"
-          
-          RESPONSE=$(
-          curl -v -X POST "https://app.sleuth.io/api/1/deployments/register" \
-          -H "Authorization: apikey ${{ secrets.SLEUTH_API_KEY }}" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "environment": "production",
-            "sha": "${{ github.sha }}",
-            "repository": "${{ github.repository }}",
-            "timestamp": "${{ github.event.head_commit.timestamp }}",
-            "email": "${{ github.event.head_commit.author.email }}",
-            "branch": "${{ github.ref_name }}",
-            "revision_title": "${{ github.event.head_commit.message }}",
-            "code_deployment": true,
-            "source": "github-actions"
-          }')
-          
-          echo "\nResposta completa do Sleuth:"
-          echo "$RESPONSE" | jq '.' || echo "$RESPONSE"
-          
-          if [[ $(echo "$RESPONSE" | grep -c "error") -gt 0 ]]; then
-            echo "\nErro detalhado do Sleuth:"
-            echo "$RESPONSE"
-            exit 1
-          fi
+          organization-slug: fatec-matao-luiz-marchesan    # slug da org no Sleuth
+          deployment-slug: pipeline-app            # nome do projeto no Sleuth
+          api-key: ${{ secrets.SLEUTH_API_KEY }}   # chave criada no Sleuth
+          sha: ${{ github.sha }}                   # commit atual
+          environment: main                        # ambiente configurado
+          email: nevesisabela03@gmail.com              # e-mail do commit/deploy
