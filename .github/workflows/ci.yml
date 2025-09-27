@@ -13,12 +13,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run Sleuth
+      - name: Run Sleuth Action
         uses: sleuth-io/sleuth-action@main
         with:
           organization-slug: fatec-matao-luiz-marchesan    # slug da org no Sleuth
-          deployment-slug: pipeline-app            # nome do projeto no Sleuth
-          api-key: ${{ secrets.SLEUTH_API_KEY }}   # chave criada no Sleuth
-          sha: ${{ github.sha }}                   # commit atual
-          environment: production                        # ambiente configurado
-          email: nevesisabela03@gmail.com              # e-mail do commit/deploy
+          deployment-slug: pipeline-app                     # nome do projeto no Sleuth
+          Authorization: Token ${{ secrets.SLEUTH_API_KEY }} # chave criada no Sleuth
+          sha: ${{ github.sha }}                            # commit atual
+          environment: production                           # ambiente configurado
+          email: nevesisabela03@gmail.com                  # e-mail do commit/deploy
+
+      - name: Test Sleuth Deploy via cURL
+        run: |
+          curl -X POST \
+            "https://app.sleuth.io/api/1/deployments/fatec-matao-luiz-marchesan/pipeline-app/register_deploy" \
+            -H "Authorization: Token ${{ secrets.SLEUTH_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d "{
+                  \"sha\": \"${{ github.sha }}\",
+                  \"environment\": \"production\",
+                  \"email\": \"nevesisabela03@gmail.com\"
+                }"
